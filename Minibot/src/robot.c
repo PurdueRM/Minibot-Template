@@ -96,6 +96,8 @@ void Handle_Disabled_State()
 void Process_Remote_Input()
 {
     // USER CODE HERE
+    g_robot_state.input.vx = g_remote.controller.left_stick.y / 660.0f;
+    g_robot_state.input.vy = g_remote.controller.left_stick.x / 660.0f;
 }
 
 void Process_Chassis_Control()
