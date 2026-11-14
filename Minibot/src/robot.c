@@ -95,22 +95,53 @@ void Handle_Disabled_State()
 
 void Process_Remote_Input()
 {
-    // USER CODE HERE
+    g_robot_state.input.vx = g_remote.controller.left_stick.x/660.0f * 2.0f;
+    g_robot_state.input.vy = g_remote.controller.left_stick.y/660.0f * 2.0f;
+    g_robot_state.input.vomega = -g_remote.controller.right_stick.x/660.0f * 6.28f;
+    
+    if (__IS_TRANSITIONED(g_remote.controller.left_switch, g_robot_state.input.prev_left_switch, MID))
+    {
+        g_robot_state.chassis.IS_SPINTOP_ENABLED = 1;
+    }
+    if (__IS_TRANSITIONED(g_remote.controller.left_switch, g_robot_state.input.prev_left_switch, DOWN) ||
+        __IS_TRANSITIONED(g_remote.controller.left_switch, g_robot_state.input.prev_left_switch, UP))
+    {
+        g_robot_state.chassis.IS_SPINTOP_ENABLED = 0;
+    }
+
+    if ((g_remote.mouse.left) || (g_remote.controller.wheel > 50.0f)) { // Hold left mouse to fire
+        g_robot_state.launch.fire_mode = SINGLE_FIRE;
+    } else {
+        g_robot_state.launch.fire_mode = NO_FIRE;
+    }
+
+    if (g_remote.controller.left_switch == UP) { // Left switch high to enable spintop
+        //g_robot_state.chassis.IS_SPINTOP_ENABLED = 1;
+        g_robot_state.launch.IS_FIRING_ENABLED = 1;
+        g_robot_state.launch.IS_AUTO_AIMING_ENABLED = 1;
+    } else {
+        //g_robot_state.chassis.IS_SPINTOP_ENABLED = 0;
+        g_robot_state.launch.IS_FIRING_ENABLED = 0;
+        g_robot_state.launch.IS_AUTO_AIMING_ENABLED = 0;
+    }
+
+    g_robot_state.input.prev_left_switch = g_remote.controller.left_switch;
+
 }
 
 void Process_Chassis_Control()
 {
-     // USER CODE HERE
+    Chassis_Ctrl_Loop();
 }
 
 void Process_Gimbal_Control()
 {
-     // USER CODE HERE
+    Gimbal_Ctrl_Loop();
 }
 
 void Process_Launch_Control()
 {
-     // USER CODE HERE
+    Launch_Ctrl_Loop();
 }
 
 /**
